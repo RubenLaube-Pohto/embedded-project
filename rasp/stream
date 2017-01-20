@@ -1,0 +1,2 @@
+raspivid --output - --timeout 0 --width 640 --height 480 --framerate 30 --bitrate 1024000 | \
+avconv -v debug -f h264 -i - -g 50 -strict experimental -f mpeg 'http://128.199.57.162/raspi.ffm'
