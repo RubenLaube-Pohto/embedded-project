@@ -1,0 +1,5 @@
+applications:
+- name: jamk-iot-angular-frontend
+  buildpack: staticfile_buildpack
+  path: dist
+  memory: 512M
