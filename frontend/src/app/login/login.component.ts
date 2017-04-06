@@ -16,7 +16,13 @@ export class LoginComponent implements OnInit {
         private api: ApiService
     ) {}
 
-    ngOnInit() {}
+    ngOnInit() {
+        this.api.isAuthenticated()
+            .subscribe(res => {
+                // Got response so is authenticated
+                this.router.navigate(['/']);
+            })
+    }
 
     login(username: string, password: string) {
         this.api.login(username, password)
