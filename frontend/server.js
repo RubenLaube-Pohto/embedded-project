@@ -50,8 +50,7 @@ app.post('/api/login', (req, res) => {
 
     if (body) {
         res.json(body);
-    }
-    else {
+    } else {
         res.sendStatus(401);
     }
 
@@ -66,10 +65,11 @@ app.get('/api/test', passport.authenticate('jwt', { session: false }), (req, res
     });
 });
 
+/**
+ * Frontend checks if existing jwt is valid
+ */
 app.get('/api/authenticated', passport.authenticate('jwt', { session: false }), (req, res) => {
-    res.json({
-        authenticated: true
-    });
+    res.sendStatus(200);
 });
 
 // Application routes

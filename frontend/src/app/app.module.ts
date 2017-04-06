@@ -7,7 +7,8 @@ import { RouterModule, Routes } from '@angular/router';
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
 import { MainComponent } from './main/main.component';
-import { AuthGuard } from 'app/auth.guard';
+import { AuthGuard } from './auth.guard';
+import { ApiService } from './api.service';
 
 export const ROUTES: Routes = [
     {
@@ -34,7 +35,8 @@ export const ROUTES: Routes = [
     RouterModule.forRoot(ROUTES)
   ],
   providers: [
-      AuthGuard
+      AuthGuard,
+      ApiService
   ],
   bootstrap: [AppComponent]
 })

@@ -1,12 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { Http, Response } from '@angular/http';
 import { Router } from '@angular/router';
 import { AuthGuard } from 'app/auth.guard';
-
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/catch';
-import 'rxjs/add/observable/throw';
+import { ApiService } from 'app/api.service';
 
 @Component({
     selector: 'app-login',
@@ -16,33 +11,23 @@ import 'rxjs/add/observable/throw';
 export class LoginComponent implements OnInit {
 
     constructor(
-        private http: Http,
         private auth: AuthGuard,
-        private router: Router
+        private router: Router,
+        private api: ApiService
     ) {}
 
     ngOnInit() {}
 
-    login(username, password) {
-        let body = {
-            username: username,
-            password: password
-        };
-        this.http.post('http://localhost:3000/api/login', body)
-            .map((res: Response) => res.json())
-            .catch((error: Response | any) => {
-                return Observable.throw('Login failed');
-            })
+    login(username: string, password: string) {
+        this.api.login(username, password)
             .subscribe(
-                res => this.handleLogin(res),
+                res => {
+                    let token = res.token;
+                    this.auth.setToken(token);
+                    this.router.navigate(['/']);
+                },
                 error => console.log(error)
             );
-    }
-
-    handleLogin(res) {
-        let token = res.token;
-        this.auth.setToken(token);
-        this.router.navigateByUrl('/');
     }
 
 }

@@ -1,32 +1,18 @@
 import { Injectable } from '@angular/core';
-import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, Router } from '@angular/router';
-import { Http, Headers, RequestOptions } from '@angular/http';
+import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/catch';
-import 'rxjs/add/observable/throw';
-import 'rxjs/add/observable/of';
+import { ApiService } from 'app/api.service';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
 
-    constructor(
-        private router: Router,
-        private http: Http
-    ) {}
+    constructor(private api: ApiService) {}
 
     canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
-        let headers = new Headers({ Authorization: 'JWT ' + this.getToken() });
-        let options = new RequestOptions({ headers: headers });
-        return this.http.get('http://localhost:3000/api/authenticated', options)
-            .map(() => true)
-            .catch(() => {
-                this.router.navigate(['/login']);
-                return Observable.of(false);
-            });
+        return this.api.isAuthenticated();
     }
 
-    setToken(token: string) {
+    setToken(token: string): void {
         if (token) {
             localStorage.setItem('jwtToken', token);
         } else {
@@ -34,7 +20,7 @@ export class AuthGuard implements CanActivate {
         }
     }
 
-    getToken() {
+    getToken(): string {
         return localStorage.getItem('jwtToken');
     }
 
