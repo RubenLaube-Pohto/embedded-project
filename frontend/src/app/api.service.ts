@@ -68,4 +68,14 @@ export class ApiService {
             });
     }
 
+    getRaspis(): Observable<any> {
+        let url = this.host + '/api/raspis';
+
+        return this.http.get(url, this.getOptions())
+            .map((res: Response) => res.json())
+            .catch((err: Response | any) => {
+                return Observable.throw('Failed to get raspis');
+            })
+    }
+
 }

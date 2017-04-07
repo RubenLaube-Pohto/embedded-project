@@ -6,7 +6,7 @@ const ExtractJwt = require('passport-jwt').ExtractJwt;
 const jwt = require('jsonwebtoken');
 const http = require('http');
 const cors = require('cors');
-const ibmClient = require('ibmiotf');
+const Client = require('ibmiotf');
 
 const app = express();
 const port = (process.env.PORT || 3000);
@@ -41,7 +41,7 @@ const appClientConfig = {
     "auth-key" : process.env.IOT_AUTH_KEY,
     "auth-token" : process.env.IOT_AUTH_TOKEN
 };
-const appClient = new ibmClient.IotfApplication(appClientConfig);
+const appClient = new Client.IotfApplication(appClientConfig);
 appClient.connect();
 appClient.on('error', (err) => {
     console.log(err);
@@ -49,6 +49,30 @@ appClient.on('error', (err) => {
 appClient.on('connect', () => {
     console.log('Connected to IBM IoT platform');
 });
+appClient.getAllDeviceTypes()
+    .then(
+        response => {
+            console.log(response);
+        },
+        err => {
+            console.log(err);
+        }
+    )
+    .catch(err => {
+        console.log(err);
+    });
+appClient.listAllDevicesOfType('raspi')
+    .then(
+        response => {
+            console.log(response);
+        },
+        err => {
+            console.log(err);
+        }
+    )
+    .catch(err => {
+        console.log(err);
+    });
 
 app.post('/api/login', (req, res) => {
 
@@ -83,6 +107,24 @@ app.post('/api/login', (req, res) => {
 app.get('/api/test', passport.authenticate('jwt', { session: false }), (req, res) => {
     res.json({
         ok: 'This is data that requires authentication',
+    });
+});
+
+app.get('/api/raspis', passport.authenticate('jwt', { session: false }), (req, res) => {
+    appClient.listAllDevicesOfType('raspi')
+    .then(
+        response => {
+            console.log(response);
+            res.json(response);
+        },
+        err => {
+            console.log(err);
+            res.sendStatus(500);
+        }
+    )
+    .catch(err => {
+        console.log(err);
+        res.sendStatus(500);
     });
 });
 

@@ -27,7 +27,15 @@ export class MainComponent implements OnInit {
         this.api.getData()
             .subscribe(
                 res => console.log(res),
-                error => console.log(error)
+                err => console.log(err)
+            );
+    }
+
+    getRaspis() {
+        this.api.getRaspis()
+            .subscribe(
+                res => console.log(res),
+                err => console.log(err)
             );
     }
 
