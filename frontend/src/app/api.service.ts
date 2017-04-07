@@ -11,7 +11,7 @@ import 'rxjs/add/operator/map';
 @Injectable()
 export class ApiService {
 
-    private host = 'http://localhost:3000';
+    private host = 'https://jamk-iot-angular-backend.eu-gb.mybluemix.net';
 
     constructor(
         private http: Http,

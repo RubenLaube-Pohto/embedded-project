@@ -4,11 +4,15 @@ const passport = require('passport');
 const JwtStrategy = require('passport-jwt').Strategy;
 const ExtractJwt = require('passport-jwt').ExtractJwt;
 const jwt = require('jsonwebtoken');
+const http = require('http');
+const cors = require('cors');
 
 const app = express();
+const port = (process.env.PORT || 3000);
 
-// Middleware for handling json
+// Middleware for handling json and cors
 app.use(bodyParser.json());
+app.use(cors());
 
 // Passport
 const opts = {
@@ -30,7 +34,7 @@ app.use(passport.initialize());
 
 app.post('/api/login', (req, res) => {
 
-    // Should get user from db
+    // Should get user from db or env
     let user = {
         username: 'test',
         password: '1234'
@@ -42,7 +46,7 @@ app.post('/api/login', (req, res) => {
         if (req.body.password === user.password) {
             let token = jwt.sign(req.body, opts.secretOrKey);
             body = {
-                msg: 'execute login',
+                msg: 'Login succesful',
                 token: token
             };
         }
@@ -61,7 +65,7 @@ app.post('/api/login', (req, res) => {
  */
 app.get('/api/test', passport.authenticate('jwt', { session: false }), (req, res) => {
     res.json({
-        ok: 'The request was authenticated',
+        ok: 'This is data that requires authentication',
     });
 });
 
@@ -72,17 +76,6 @@ app.get('/api/authenticated', passport.authenticate('jwt', { session: false }), 
     res.sendStatus(200);
 });
 
-// Application routes
-app.get('/', (req, res) => {
-    res.sendFile(__dirname + '/dist/index.html');
-});
-app.get('/login', (req, res) => {
-    res.sendFile(__dirname + '/dist/index.html');
-});
-
-// Static files path
-app.use(express.static(__dirname + '/dist'));
-
-app.listen(3000, () => {
-    console.log('Example app listening on port 3000!');
+http.createServer(app).listen(port, () => {
+    console.log(`Server listening on port ${port}!`);
 });

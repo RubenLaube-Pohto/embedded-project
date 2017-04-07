@@ -2,13 +2,18 @@
   "name": "frontend",
   "version": "0.0.0",
   "license": "MIT",
+  "engines": {
+    "node": "6.x.x",
+    "npm": "4.x.x"
+  },
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
+    "deploy": "ng build -prod && cf push"
   },
   "private": true,
   "dependencies": {
@@ -20,12 +25,7 @@
     "@angular/platform-browser": "^4.0.0",
     "@angular/platform-browser-dynamic": "^4.0.0",
     "@angular/router": "^4.0.0",
-    "body-parser": "^1.17.1",
     "core-js": "^2.4.1",
-    "express": "^4.15.2",
-    "jsonwebtoken": "^7.3.0",
-    "passport": "^0.3.2",
-    "passport-jwt": "^2.2.1",
     "rxjs": "^5.3.0",
     "zone.js": "^0.8.4"
   },

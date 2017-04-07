@@ -1,0 +1,5 @@
+applications:
+- name: jamk-iot-angular-backend
+  buildpack: sdk-for-nodejs
+  path: dist
+  memory: 512M
