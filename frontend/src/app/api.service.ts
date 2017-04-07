@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, isDevMode } from '@angular/core';
 import { Http, Response, Headers, RequestOptions } from '@angular/http';
 import { Router } from '@angular/router';
 
@@ -11,12 +11,18 @@ import 'rxjs/add/operator/map';
 @Injectable()
 export class ApiService {
 
-    private host = 'https://jamk-iot-angular-backend.eu-gb.mybluemix.net';
+    private host: string;
 
     constructor(
         private http: Http,
         private router: Router
-    ) {}
+    ) {
+        if (isDevMode()) {
+            this.host = 'http://localhost:3000';
+        } else {
+            this.host = 'https://jamk-iot-angular-backend.eu-gb.mybluemix.net';
+        }
+    }
 
     private getOptions(): RequestOptions {
         let headers = new Headers({
