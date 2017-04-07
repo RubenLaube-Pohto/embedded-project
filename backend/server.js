@@ -6,6 +6,7 @@ const ExtractJwt = require('passport-jwt').ExtractJwt;
 const jwt = require('jsonwebtoken');
 const http = require('http');
 const cors = require('cors');
+const ibmClient = require('ibmiotf');
 
 const app = express();
 const port = (process.env.PORT || 3000);
@@ -16,7 +17,7 @@ app.use(cors());
 
 // Passport
 const opts = {
-    secretOrKey: 'secret',
+    secretOrKey: process.env.JWT_SECRET,
     jwtFromRequest: ExtractJwt.fromAuthHeader()
 };
 passport.use(new JwtStrategy(opts, (jwt_payload, done) => {
@@ -32,12 +33,28 @@ passport.use(new JwtStrategy(opts, (jwt_payload, done) => {
 }));
 app.use(passport.initialize());
 
+// IBM IoT client
+const appClientConfig = {
+    "org" : process.env.IBM_ORG_ID,
+    "id" : 'myapp',
+    "domain": "internetofthings.ibmcloud.com",
+    "auth-key" : process.env.IOT_AUTH_KEY,
+    "auth-token" : process.env.IOT_AUTH_TOKEN
+};
+const appClient = new ibmClient.IotfApplication(appClientConfig);
+appClient.connect();
+appClient.on('error', (err) => {
+    console.log(err);
+});
+appClient.on('connect', () => {
+    console.log('Connected to IBM IoT platform');
+});
+
 app.post('/api/login', (req, res) => {
 
-    // Should get user from db or env
     let user = {
-        username: 'test',
-        password: '1234'
+        username: process.env.USERNAME,
+        password: process.env.PASSWORD
     };
 
     let body = null;
