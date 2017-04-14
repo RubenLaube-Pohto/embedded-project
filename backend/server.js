@@ -22,7 +22,7 @@ const opts = {
 };
 passport.use(new JwtStrategy(opts, (jwt_payload, done) => {
 
-    if (jwt_payload.username === 'test') {
+    if (jwt_payload.username === process.env.USERNAME) {
         // return any value on success
         return done(null, true);
     }
