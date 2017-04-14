@@ -1,9 +1,17 @@
-<label>
-    Username
-    <input #username type="text" />
-</label>
-<label>
-    Password
-    <input #password type="password" />
-</label>
-<button (click)="login(username.value, password.value)">Login</button>
+<div class="login-container">
+    <label>
+        Username<br>
+        <input #username type="text"
+            (keyup.enter)="password.focus()" />
+    </label>
+    <br>
+    <label>
+        Password<br>
+        <input #password type="password"
+            (keyup.enter)="login(username.value, password.value)" />
+    </label>
+    <br>
+    <button type="button"
+        class="btn btn-primary btn-block"
+        (click)="login(username.value, password.value)">Login</button>
+</div>

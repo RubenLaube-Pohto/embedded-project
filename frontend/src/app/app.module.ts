@@ -10,6 +10,9 @@ import { MainComponent } from './main/main.component';
 import { AuthGuard } from './auth.guard';
 import { ApiService } from './api.service';
 
+// Bootstrap modules
+import { ButtonsModule } from 'ngx-bootstrap/buttons';
+
 export const ROUTES: Routes = [
     {
         path: '',
@@ -32,7 +35,8 @@ export const ROUTES: Routes = [
     BrowserModule,
     FormsModule,
     HttpModule,
-    RouterModule.forRoot(ROUTES)
+    RouterModule.forRoot(ROUTES),
+    ButtonsModule.forRoot()
   ],
   providers: [
       AuthGuard,
