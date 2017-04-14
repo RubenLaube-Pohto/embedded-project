@@ -1,0 +1,7 @@
+export IOT_AUTH_KEY=''
+export IOT_AUTH_TOKEN=''
+export IBM_ORG_ID=''
+export IBM_APP_ID=''
+export USERNAME=''
+export PASSWORD=''
+export JWT_SECRET=''
