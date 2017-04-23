@@ -75,7 +75,26 @@ export class ApiService {
             .map((res: Response) => res.json())
             .catch((err: Response | any) => {
                 return Observable.throw('Failed to get raspis');
-            })
+            });
     }
 
+    getDocuments(): Observable<any> {
+        let url = this.host + '/api/documents';
+
+        return this.http.get(url, this.getOptions())
+            .map((res: Response) => res.json())
+            .catch((err: any) => {
+                return Observable.throw('Failed to get documents from Cloudant');
+            });
+    }
+
+    getImage(id: string): Observable<any> {
+        let url = this.host + `/api/documents/${id}/image`;
+
+        return this.http.get(url, this.getOptions())
+            .map((res: Response) => res.json())
+            .catch((err: any) => {
+                return Observable.throw('Failed to get image by id ' + id);
+            });
+    }
 }

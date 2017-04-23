@@ -10,33 +10,84 @@ import { ApiService } from 'app/api.service';
 })
 export class MainComponent implements OnInit {
 
+    raspis: any[];
+    documents: any[];
+    imageCache: any;
+
+    state = {
+        loading: false,
+        error: false
+    };
+
     constructor(
         private auth: AuthGuard,
         private router: Router,
         private api: ApiService
     ) {}
 
-    ngOnInit() {}
+    ngOnInit() {
+        this.api.getRaspis()
+            .subscribe(
+                res => {
+                    this.raspis = res.results;
+                    console.log(this.raspis);
+                },
+                err => console.log(err)
+            );
+    }
 
-    logout() {
+    logout(): void {
         this.auth.setToken(null);
         this.router.navigate(['/login']);
     }
 
-    getData() {
-        this.api.getData()
+    getDocuments(raspiId: string) {
+        this.api.getDocuments()
             .subscribe(
-                res => console.log(res),
+                res => {
+                    this.documents = res.rows;
+                    console.log(this.documents);
+                    this.imageCache = {};
+                    this.documents.forEach(doc => {
+                        this.imageCache[doc.id] = null;
+                    });
+                    this.loadImage(this.documents[0].id);
+                },
                 err => console.log(err)
             );
     }
 
-    getRaspis() {
-        this.api.getRaspis()
+    loadImage(id: string): void {
+        this.state.loading = true;
+        this.state.error = false;
+
+        if (this.imageCache[id]) {
+            this.state.loading = false;
+            return;
+        }
+
+        this.api.getImage(id)
+            .finally(() => this.state.loading = false)
             .subscribe(
-                res => console.log(res),
-                err => console.log(err)
+                res => {
+                    this.imageCache[id] =
+                        'data:image/JPEG;base64,' + this.arrayBufferToBase64(res);
+                },
+                err => {
+                    console.log(err)
+                    this.state.error = err;
+                }
             );
     }
 
+    arrayBufferToBase64(buffer: number[]): any {
+        let binary = new Uint8Array(buffer)
+            .reduce((data, byte) => data + String.fromCharCode(byte), '');
+
+        return btoa(binary);
+    }
+
+    slideChanged(event: number) {
+        this.loadImage(this.documents[event].id);
+    }
 }

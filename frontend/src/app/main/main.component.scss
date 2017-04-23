@@ -1,0 +1,25 @@
+.raspi-list {
+    list-style-type: none;
+    padding: 0px;
+}
+
+.carousel-container {
+    position: relative;
+    margin: auto;
+    width: 66%;
+    md-spinner {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+    .error {
+        position: absolute;
+        width: 100%;
+        top: 50%;
+        transform: translateY(-50%);
+        text-align: center;
+        font-weight: bold;
+        color: red;
+    }
+}

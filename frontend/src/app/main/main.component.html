@@ -1,6 +1,24 @@
-<p>
-  main works!
-</p>
-<button (click)="logout()">Logout</button>
-<button (click)="getData()">Get protected data</button>
-<button (click)="getRaspis()">Get raspis</button>
+<ul class="raspi-list">
+    <li *ngFor="let raspi of raspis">
+        <button class="btn btn-secondary" (click)="getDocuments(raspi.deviceID)">
+            {{ raspi.deviceId }}
+        </button>
+    </li>
+</ul>
+
+<div class="carousel-container">
+    <carousel interval="false" (activeSlideChange)="slideChanged($event)">
+        <slide *ngFor="let document of documents">
+            <img
+                [src]="imageCache[document.id] ? imageCache[document.id] : 'assets/loading-bg.png'"
+                [alt]="document.id"
+            >
+        </slide>
+    </carousel>
+    <md-spinner *ngIf="state.loading"></md-spinner>
+    <p *ngIf="state.error" class="error">
+        {{ state.error }}
+    </p>
+</div>
+
+<button class="btn btn-primary" (click)="logout()">Logout</button>

@@ -7,6 +7,7 @@ const jwt = require('jsonwebtoken');
 const http = require('http');
 const cors = require('cors');
 const Client = require('ibmiotf');
+const Cloudant = require('cloudant');
 
 const app = express();
 const port = (process.env.PORT || 3000);
@@ -49,30 +50,21 @@ appClient.on('error', (err) => {
 appClient.on('connect', () => {
     console.log('Connected to IBM IoT platform');
 });
-appClient.getAllDeviceTypes()
-    .then(
-        response => {
-            console.log(response);
-        },
-        err => {
-            console.log(err);
-        }
-    )
-    .catch(err => {
-        console.log(err);
-    });
-appClient.listAllDevicesOfType('raspi')
-    .then(
-        response => {
-            console.log(response);
-        },
-        err => {
-            console.log(err);
-        }
-    )
-    .catch(err => {
-        console.log(err);
-    });
+
+// Cloudant
+let db;
+const cloudantConfig = {
+    account: process.env.CLOUDANT_ACCOUNT,
+    username: process.env.CLOUDANT_USERNAME,
+    password: process.env.CLOUDANT_PASSWORD
+};
+Cloudant(cloudantConfig, (err, cloudant) => {
+    if (err) throw err;
+
+    db = cloudant.use('nsaimagestore');
+    console.log('Connected to IBM Cloudant');
+});
+
 
 app.post('/api/login', (req, res) => {
 
@@ -101,15 +93,6 @@ app.post('/api/login', (req, res) => {
 
 });
 
-/**
- * For testing. This is used to simulate a protected endpoint.
- */
-app.get('/api/test', passport.authenticate('jwt', { session: false }), (req, res) => {
-    res.json({
-        ok: 'This is data that requires authentication',
-    });
-});
-
 app.get('/api/raspis', passport.authenticate('jwt', { session: false }), (req, res) => {
     appClient.listAllDevicesOfType('raspi')
     .then(
@@ -125,6 +108,34 @@ app.get('/api/raspis', passport.authenticate('jwt', { session: false }), (req, r
     .catch(err => {
         console.log(err);
         res.sendStatus(500);
+    });
+});
+
+app.get('/api/documents', passport.authenticate('jwt', { session: false }), (req, res) => {
+    db.list((err, body) => {
+        if (err) {
+            console.log(err);
+            res.sendStatus(500);
+        } else {
+            res.json(body);
+        }
+    });
+});
+
+app.get('/api/documents/:id/image', passport.authenticate('jwt', { session: false }), (req, res) => {
+    db.get(req.params.id, (err, body) => {
+        if (err) {
+            console.log(err);
+            res.sendStatus(500);
+        } else {
+            try {
+                let imageData = JSON.parse(body.payload).content.data;
+                res.json(imageData);
+            } catch (err) {
+                console.log(err);
+                res.sendStatus(500);
+            }
+        }
     });
 });
 
